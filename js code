@@ -1,0 +1,46 @@
+let startTime;
+let running = false;
+let interval;
+let lapCount = 1;
+
+function startStop() {
+    if (running) {
+        clearInterval(interval);
+        document.getElementById("startStop").textContent = "Start";
+    } else {
+        startTime = startTime || Date.now();
+        interval = setInterval(updateTime, 10);
+        document.getElementById("startStop").textContent = "Pause";
+    }
+    running = !running;
+}
+
+function updateTime() {
+    const currentTime = Date.now();
+    const elapsedTime = new Date(currentTime - startTime);
+    const minutes = elapsedTime.getUTCMinutes();
+    const seconds = elapsedTime.getUTCSeconds();
+    const milliseconds = elapsedTime.getUTCMilliseconds();
+
+    document.getElementById("display").textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
+}
+
+function reset() {
+    clearInterval(interval);
+    running = false;
+    startTime = null;
+    document.getElementById("display").textContent = "00:00.00";
+    document.getElementById("startStop").textContent = "Start";
+    lapCount = 1;
+    document.getElementById("lapList").innerHTML = "";
+}
+
+function lapTime() {
+    if (running) {
+        const lapTime = document.createElement("li");
+        lapTime.classList.add("lap-item");
+        lapTime.textContent = `Lap ${lapCount}: ${document.getElementById("display").textContent}`;
+        document.getElementById("lapList").appendChild(lapTime);
+        lapCount++;
+    }
+}
